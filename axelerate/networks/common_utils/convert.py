@@ -14,7 +14,7 @@ import shlex
 
 k210_converter_path=os.path.join(os.path.dirname(__file__),"ncc","ncc")
 k210_converter_download_path=os.path.join(os.path.dirname(os.path.abspath(__file__)),'ncc_linux_x86_64.tar.xz')
-nncase_download_url="https://github.com/kendryte/nncase/releases/download/v0.2.0-beta4/ncc_linux_x86_64.tar.xz"
+nncase_download_url="https://github.com/kendryte/nncase/releases/download/v0.1.0-rc5/ncc-linux-x86_64.tar.xz"
 cwd = os.path.dirname(os.path.realpath(__file__))
 
 def run_command(cmd, cwd=None):
@@ -23,7 +23,7 @@ def run_command(cmd, cwd=None):
             line = p.stdout.readline()
             if not line:
                 break
-            print(line)    
+            print(line)
         exit_code = p.poll()
     return exit_code
 
@@ -37,8 +37,8 @@ class Converter(object):
                 print('K210 Converter ready')
             else:
                 print('Downloading K210 Converter')
-                _path = tf.keras.utils.get_file(k210_converter_download_path, nncase_download_url)     
-                print(_path)    
+                _path = tf.keras.utils.get_file(k210_converter_download_path, nncase_download_url)
+                print(_path)
                 tar_file = tarfile.open(k210_converter_download_path)
                 tar_file.extractall(os.path.join(os.path.dirname(__file__),"ncc"))
                 tar_file.close()
@@ -53,7 +53,7 @@ class Converter(object):
                 cmd = "bash install_edge_tpu_compiler.sh"
                 result = run_command(cmd, cwd)
                 print(result)
-                
+
         if 'openvino' in converter_type:
             rc = os.path.isdir('/opt/intel/openvino')
             if rc:
@@ -62,8 +62,8 @@ class Converter(object):
                 print('Installing OpenVINO Converter')
                 cmd = "bash install_openvino.sh"
                 result = run_command(cmd, cwd)
-                print(result)       
-                
+                print(result)
+
         self._converter_type = converter_type
         self._backend = backend
         self._dataset_path=dataset_path
@@ -100,7 +100,7 @@ class Converter(object):
             data = np.array(backend.normalize(image), dtype=np.float32)
             data = np.expand_dims(data, 0)
             bin_filename = os.path.basename(filename).split('.')[0]+'.bin'
-            with open(os.path.join(temp_folder, bin_filename), "wb") as f: 
+            with open(os.path.join(temp_folder, bin_filename), "wb") as f:
                 data = np.transpose(data, [0, 3, 1, 2])
                 data.tofile(f)
         return temp_folder
@@ -168,9 +168,9 @@ class Converter(object):
         if model_type == 'yolo':
             model = tf.keras.Model(inputs=model.input, outputs=model.layers[-2].output)
             print("Converting to tflite without Reshape")
-            
-        if target=='k210': 
-            if model_type == 'segnet':   
+
+        if target=='k210':
+            if model_type == 'segnet':
                 print("Converting to tflite with old converter for K210 Segnet")
                 converter = tf.lite.TFLiteConverter.from_keras_model(model)
                 converter.experimental_new_converter = False
@@ -188,12 +188,12 @@ class Converter(object):
         elif target == 'tflite_dynamic':
             converter = tf.lite.TFLiteConverter.from_keras_model(model)
             converter.optimizations = [tf.lite.Optimize.DEFAULT]
-            
+
         elif target == 'tflite_fullint':
             converter = tf.lite.TFLiteConverter.from_keras_model(model)
-            converter.optimizations = [tf.lite.Optimize.DEFAULT]            
+            converter.optimizations = [tf.lite.Optimize.DEFAULT]
             converter.representative_dataset = self.edgetpu_dataset_gen
-            
+
         else:
             converter = tf.lite.TFLiteConverter.from_keras_model(model)
 
@@ -219,7 +219,7 @@ class Converter(object):
         if 'onnx' in self._converter_type:
             import tf2onnx
             self.convert_onnx(model, model_layers)
-            
+
         if 'openvino' in self._converter_type:
             model.save(model_path.split(".")[0])
             self.convert_ir(model_path, model_layers)
@@ -237,7 +237,7 @@ if __name__ == '__main__':
     parser.add_argument("--dataset_path", type=str, required=False,
                         help="path to calibration dataset")
     parser.add_argument("--backend", type=str, default='MobileNet7_5',
-                    help="network feature extractor, e.g. Mobilenet/YOLO/NASNet/etc")                    
+                    help="network feature extractor, e.g. Mobilenet/YOLO/NASNet/etc")
     args = parser.parse_args()
     converter = Converter(args.converter_type, args.backend, args.dataset_path)
     converter.convert_model(args.model_path)
