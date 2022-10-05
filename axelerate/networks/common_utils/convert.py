@@ -128,7 +128,7 @@ class Converter(object):
         cmd = '{} -i tflite -o k210model --dataset "{}" "{}" "{}"'.format(k210_converter_path, folder_name, model_path, output_path)
         print(cmd)
         result = run_command(cmd)
-        shutil.rmtree(folder_name, ignore_errors=True)
+        # shutil.rmtree(folder_name, ignore_errors=True)
         print(result)
 
     def convert_ir(self, model_path, model_layers):
