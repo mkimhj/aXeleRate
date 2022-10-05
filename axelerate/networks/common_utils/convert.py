@@ -94,9 +94,10 @@ class Converter(object):
         print("build feature extractor")
         image_search = lambda ext : glob.glob(self._dataset_path + ext, recursive=True)
         for ext in ['/**/*.jpg', '/**/*.jpeg', '/**/*.png']: image_files_list.extend(image_search(ext))
+        print(image_files_list)
         temp_folder = os.path.join(os.path.dirname(__file__),'tmp')
         os.mkdir(temp_folder)
-        print("built temp directory")
+        print("built temp directory " + temp_folder)
         for filename in image_files_list[:num_imgs]:
             image = cv2.imread(filename)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
