@@ -118,8 +118,8 @@ class Converter(object):
         output_name = os.path.basename(model_path).split(".")[0]+".kmodel"
         output_path = os.path.join(os.path.dirname(model_path),output_name)
         print(output_path)
-        # cmd = '{} compile "{}" "{}" -i tflite -o k210model --weights-quantize-threshold 1000 --dataset-format raw --dataset "{}"'.format(k210_converter_path, model_path, output_path, folder_name)
-        cmd = '{} compile "{}" "{}" -i tflite -o k210model --dataset-format raw --dataset "{}"'.format(k210_converter_path, model_path, output_path, folder_name)
+        # cmd = '{} compile "{}" "{}" -i tflite --weights-quantize-threshold 1000 --dataset-format raw --dataset "{}"'.format(k210_converter_path, model_path, output_path, folder_name)
+        cmd = '{} -i tflite -o k210model --dataset "{}" "{}" "{}"'.format(k210_converter_path, folder_name, model_path, output_path)
         print(cmd)
         result = run_command(cmd)
         shutil.rmtree(folder_name, ignore_errors=True)
