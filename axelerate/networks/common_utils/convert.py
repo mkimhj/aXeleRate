@@ -85,14 +85,18 @@ class Converter(object):
             yield [data]
 
     def k210_dataset_gen(self):
+        print("k210_dataset_gen")
         num_imgs = 300
         image_files_list = []
         from axelerate.networks.common_utils.feature import create_feature_extractor
+        print("test")
         backend = create_feature_extractor(self._backend, [self._img_size[0], self._img_size[1]])
+        print("build feature extractor")
         image_search = lambda ext : glob.glob(self._dataset_path + ext, recursive=True)
         for ext in ['/**/*.jpg', '/**/*.jpeg', '/**/*.png']: image_files_list.extend(image_search(ext))
         temp_folder = os.path.join(os.path.dirname(__file__),'tmp')
         os.mkdir(temp_folder)
+        print("built temp directory")
         for filename in image_files_list[:num_imgs]:
             image = cv2.imread(filename)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -103,6 +107,7 @@ class Converter(object):
             with open(os.path.join(temp_folder, bin_filename), "wb") as f:
                 data = np.transpose(data, [0, 3, 1, 2])
                 data.tofile(f)
+        print("finish converting images")
         return temp_folder
 
     def convert_edgetpu(self, model_path):
