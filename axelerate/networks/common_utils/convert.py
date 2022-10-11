@@ -97,33 +97,29 @@ class Converter(object):
         temp_folder = os.path.join(os.path.dirname(__file__),'tmp')
         os.mkdir(temp_folder)
         print("built temp directory " + temp_folder)
-        first = 1
         for filename in image_files_list[:num_imgs]:
             image = cv2.imread(filename)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             image = cv2.resize(image, (self._img_size[0], self._img_size[1]))
             data = np.array(backend.normalize(image), dtype=np.float32)
-            if (first):
-              print("data1: ")
-              print(data[0])
-            data = np.expand_dims(data, 0)
-            if (first):
-              print("data2: ")
-              print(data[0])
+            # data = np.expand_dims(data, 0)
             bin_filename = os.path.basename(filename).split('.')[0]+'.jpg'
-            print(bin_filename)
-            with open(os.path.join(temp_folder, bin_filename), "wb") as f:
-                data = np.transpose(data, [0, 3, 1, 2])
-                if (first):
-                  print("data3")
-                  print(data[0])
-                # data.tofile(f)
-                # print(type(f))
-                # print(str(f))
-                success = cv2.imwrite(str(f), data)
-                if success is False:
-                  print("Failed to write")
-            first = 0
+            fullpath = temp_folder+bin_filename
+            success = cv2.imwrite(fullpath, data)
+            if success is False:
+              print("Failed to write to " + fullpath)
+            else:
+              print(bin_filename)
+            # with open(os.path.join(temp_folder, bin_filename), "wb") as f:
+            #     # data = np.transpose(data, [0, 3, 1, 2])
+            #     # data.tofile(f)
+            #     # print(type(f))
+            #     # print(str(f))
+            #     success = cv2.imwrite(str(f), data)
+            #     if success is False:
+            #       print("Failed to write")
+            #     else:
+            #       print(bin_filename)
         print("finish converting images")
         return temp_folder
 
