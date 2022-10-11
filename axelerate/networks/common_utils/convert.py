@@ -107,7 +107,10 @@ class Converter(object):
             print(bin_filename)
             with open(os.path.join(temp_folder, bin_filename), "wb") as f:
                 data = np.transpose(data, [0, 3, 1, 2])
-                cv2.imwrite(f, data)
+                # data.tofile(f)
+                # print(type(f))
+                # print(str(f))
+                cv2.imwrite(str(f), data)
         print("finish converting images")
         return temp_folder
 
