@@ -104,16 +104,19 @@ class Converter(object):
             image = cv2.resize(image, (self._img_size[0], self._img_size[1]))
             data = np.array(backend.normalize(image), dtype=np.float32)
             if (first):
-              print(data)
+              print("data1: ")
+              print(data[0])
             data = np.expand_dims(data, 0)
             if (first):
-              print(data)
+              print("data2: ")
+              print(data[0])
             bin_filename = os.path.basename(filename).split('.')[0]+'.jpg'
             print(bin_filename)
             with open(os.path.join(temp_folder, bin_filename), "wb") as f:
                 data = np.transpose(data, [0, 3, 1, 2])
                 if (first):
-                  print(data)
+                  print("data3")
+                  print(data[0])
                 # data.tofile(f)
                 # print(type(f))
                 # print(str(f))
