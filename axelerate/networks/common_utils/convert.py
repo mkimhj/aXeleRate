@@ -109,7 +109,7 @@ class Converter(object):
             if success is False:
               print("Failed to write to " + fullpath)
             else:
-              print(Wrote to + fullpath)
+              print("Wrote to " + fullpath)
             # with open(os.path.join(temp_folder, bin_filename), "wb") as f:
             #     # data = np.transpose(data, [0, 3, 1, 2])
             #     # data.tofile(f)
