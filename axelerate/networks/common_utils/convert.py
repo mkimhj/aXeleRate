@@ -134,13 +134,22 @@ class Converter(object):
     def convert_k210(self, model_path):
         folder_name = self.k210_dataset_gen()
         output_name = os.path.basename(model_path).split(".")[0]+".kmodel"
+        print(output_name)
         output_path = os.path.join(os.path.dirname(model_path),output_name)
+        output_path_float = os.path.join(os.path.dirname(model_path),"float.kmodel")
+        output_path_channelwise = os.path.join(os.path.dirname(model_path),"channelwise.kmodel")
         print(output_path)
         # cmd = '{} compile "{}" "{}" -i tflite --weights-quantize-threshold 1000 --dataset-format raw --dataset "{}"'.format(k210_converter_path, model_path, output_path, folder_name)
         cmd = '{} -i tflite -o k210model --dataset "{}" "{}" "{}"'.format(k210_converter_path, folder_name, model_path, output_path)
         print(cmd)
         result = run_command(cmd)
-        # shutil.rmtree(folder_name, ignore_errors=True)
+        cmd = '{} -i tflite -o k210model --inference-type float --dataset "{}" "{}" "{}"'.format(k210_converter_path, folder_name, model_path, output_path_float)
+        print(cmd)
+        result = run_command(cmd)
+        cmd = '{} -i tflite -o k210model --channelwise-output --dataset "{}" "{}" "{}"'.format(k210_converter_path, folder_name, model_path, output_path_channelwise)
+        print(cmd)
+        result = run_command(cmd)
+        shutil.rmtree(folder_name, ignore_errors=True)
         print(result)
 
     def convert_ir(self, model_path, model_layers):
